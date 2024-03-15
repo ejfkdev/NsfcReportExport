@@ -1,17 +1,22 @@
 {
-  "extends": "@modern-js/tsconfig/base",
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2020",
     "declaration": false,
     "module": "ESNext",
-    "jsx": "preserve",
-    "baseUrl": "./",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@shared/*": ["./shared/*"]
+      "@/*": ["./src/*"]
     },
     "types": ["chrome-types"]
   },
-  "include": ["src", "src/**/*.d.ts", "shared", "config", "modern.config.ts"],
+  "include": ["src", "src/**/*.d.ts", "rspack.config.ts"],
   "exclude": ["**/node_modules"]
 }

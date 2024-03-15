@@ -1,16 +1,14 @@
 {
   "name": "NsfcReportExport",
-  "version": "0.1.0",
+  "version": "1.3.1",
+  "author": {
+    "name": "ejfkdev"
+  },
+  "homepage": "https://github.com/ejfkdev/NsfcReportExport",
   "scripts": {
     "reset": "npx rimraf ./**/node_modules",
-    "dev": "modern dev",
-    "build": "modern build",
-    "start": "modern start",
-    "serve": "modern serve",
-    "new": "modern new",
-    "lint": "modern lint",
     "prepare": "husky install",
-    "upgrade": "modern upgrade"
+    "build": "NODE_ENV=production rspack build"
   },
   "engines": {
     "node": ">=16.18.1"
@@ -25,23 +23,22 @@
     "dist/"
   ],
   "dependencies": {
-    "@modern-js/runtime": "2.46.1",
-    "react": "~18.2.0",
-    "react-dom": "~18.2.0"
+    "@ejfkdev/async-pool": "^1.0.0",
+    "image-dimensions": "^2.3.0",
+    "jspdf": "^2.5.1",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@modern-js/app-tools": "2.46.1",
-    "@modern-js/eslint-config": "2.46.1",
-    "@modern-js/tsconfig": "2.46.1",
-    "@modern-js-app/eslint-config": "2.46.1",
-    "typescript": "~5.0.4",
-    "@types/jest": "~29.2.4",
-    "@types/node": "~16.11.7",
-    "@types/react": "~18.0.26",
-    "@types/react-dom": "~18.0.10",
-    "lint-staged": "~13.1.0",
-    "prettier": "~2.8.1",
-    "husky": "~8.0.1",
-    "rimraf": "~3.0.2"
+    "@rspack/cli": "0.5.7",
+    "@rspack/core": "0.5.7",
+    "@types/lodash": "^4.17.0",
+    "@types/node": "~20.11.27",
+    "chrome-types": "^0.1.273",
+    "husky": "~9.0.11",
+    "lint-staged": "~15.2.2",
+    "prettier": "~3.2.5",
+    "rimraf": "~5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.4.2"
   }
 }

@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "国自然结题报告下载",
+  "description": "国自然结题报告点击一键导出原图PDF http://t.cn/A6YcPeIM ",
+  "version": "0.1.0",
+  "default_locale": "zh_CN",
+  "icons": {
+    "512": "images/logo.png"
+  },
+  "action":{
+    "icons": {
+      "512": "images/logo.png"
+    },
+    "default_title":"导出PDF"
+  },
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "externally_connectable": {
+    "matches": [
+      "https://kd.nsfc.cn/*"
+    ],
+    "accepts_tls_channel_id": true
+  },
+  "host_permissions": [
+    "https://kd.nsfc.cn/*"
+  ],
+  "permissions": [
+    "downloads",
+    "notifications",
+    "contextMenus",
+    "scripting",
+    "activeTab",
+    "downloads.open"
+  ]
+}

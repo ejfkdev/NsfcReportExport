@@ -1,5 +1,4 @@
-chrome >= 51
-edge >= 15
-firefox >= 54
-safari >= 10
-ios_saf >= 10
+last 2 Chrome versions, not dead
+last 2 Edge versions, not dead
+last 2 Firefox versions, not dead
+

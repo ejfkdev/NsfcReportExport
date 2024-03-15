@@ -1,14 +1,17 @@
 {
   "extends": "@modern-js/tsconfig/base",
   "compilerOptions": {
+    "target": "ES2021",
     "declaration": false,
+    "module": "ESNext",
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["./shared/*"]
-    }
+    },
+    "types": ["chrome-types"]
   },
-  "include": ["src", "shared", "config", "modern.config.ts"],
+  "include": ["src", "src/**/*.d.ts", "shared", "config", "modern.config.ts"],
   "exclude": ["**/node_modules"]
 }

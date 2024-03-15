@@ -1,0 +1,17 @@
+article.woo-panel-main {
+
+    & header.woo-box-flex:hover div.optHover,
+    div.wbpro-feed-reText div.woo-box-alignCenter:hover div.optHover {
+        opacity: 1;
+    }
+}
+
+article.woo-panel-main {
+
+    & header.woo-box-flex div.optHover,
+    div.wbpro-feed-reText div.woo-box-alignCenter div.optHover {
+        opacity: 0;
+        -webkit-transition: opacity .2s ease;
+        transition: opacity .2s ease;
+    }
+}

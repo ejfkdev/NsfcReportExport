@@ -1,0 +1,97 @@
+{
+  "title": {
+    "message": "标题",
+    "description": "标题描述"
+  },
+  "content": {
+    "message": "内容",
+    "description": "内容描述"
+  },
+  "ext_name": {
+    "message": "热带雨林·微博助手 评论点赞一键拉黑，不误封"
+  },
+  "ext_description": {
+    "message": "善用拉黑，勤用拉黑。评论点赞一键拉黑，豁免功能可有效防止误伤到手滑点赞的群众。"
+  },
+  "q_delete_comment": {
+    "message": "🌴 确定删除评论么？"
+  },
+  "delete_comment": {
+    "message": "删除评论"
+  },
+  "block_user": {
+    "message": "同时将此用户加入黑名单"
+  },
+  "block_like": {
+    "message": "同时拉黑点赞的用户"
+  },
+  "q_block": {
+    "message": "🌴 拉黑?"
+  },
+  "block_user2": {
+    "message": "将此用户加入黑名单"
+  },
+  "block_like2": {
+    "message": "将点赞的用户加入黑名单"
+  },
+  "yes": {
+    "message": "确定"
+  },
+  "delete": {
+    "message": "删除"
+  },
+  "selva": {
+    "message": "热带雨林"
+  },
+  "enhanced_deletion": {
+    "message": "增强删除"
+  },
+  "block_button": {
+    "message": "拉黑按钮"
+  },
+  "no_block": {
+    "message": "🌴 点赞不拉黑"
+  },
+  "no_block_msg": {
+    "message": "符合任意一项即不拉黑"
+  },
+  "Verify": {
+    "message": "V认证用户"
+  },
+  "VVIP": {
+    "message": "V+、VVIP、SVIP用户"
+  },
+  "Follow": {
+    "message": "我关注了Ta"
+  },
+  "FollowMe": {
+    "message": "Ta关注了我"
+  },
+  "FollowAlso": {
+    "message": "我关注的人关注了Ta（至少2人）"
+  },
+  "Fans": {
+    "message": "粉丝大于10万"
+  },
+  "Credit": {
+    "message": "信用极好"
+  },
+  "AntiBlockSetting": {
+    "message": "🌴 防误封设置"
+  },
+  "StatisticalBlockUsers": {
+    "message": "🌴 黑名单统计"
+  },
+  "enable_stat": {
+    "message": "🌴 开始统计黑名单吗？"
+  },
+  "enable_stat_msg": {
+    "message": "需要一段时间才能完成，完成后会通知你"
+  },
+  "follow_me": {
+    "message": "关注我的微博(ejfkdev)"
+  },
+  "counting": {
+    "message": "正在统计"
+  }
+}

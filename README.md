@@ -13,5 +13,3 @@ chrome商店地址：https://chromewebstore.google.com/detail/%E5%9B%BD%E8%87%AA
 pnpm i  --registry=https://registry.npmmirror.com
 pnpm run build
 ```
-
-1

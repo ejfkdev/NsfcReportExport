@@ -4,17 +4,8 @@ const mode = process.env.NODE_ENV ?? "development"; // production development
 // const isDev = process.env.NODE_ENV === "development";
 // import { Configuration } from "@rspack/cli";
 const rspack = require("@rspack/core");
-
 /** @type {import('@rspack/cli').Configuration} */
 const config = {
-  experiments: {
-    // outputModule: true,
-    newSplitChunks: true,
-    rspackFuture: {
-      newTreeshaking: true,
-      disableApplyEntryLazily: true,
-    },
-  },
   optimization: {
     splitChunks: true,
     splitChunks: {
@@ -23,6 +14,10 @@ const config = {
     minimize: true,
     moduleIds: "named",
     chunkIds: "named",
+    minimizer: [
+      new rspack.SwcJsMinimizerRspackPlugin({}),
+      new rspack.SwcCssMinimizerRspackPlugin(),
+    ],
   },
   mode: mode,
   // mode: "production",
@@ -31,8 +26,9 @@ const config = {
   entry: {
     service_worker: "./src/service_worker.ts",
   },
+  devtool: "source-map",
   output: {
-    path: "dist",
+    // path: "dist",
     chunkFilename: "./libs/[name].bundle.js",
     chunkLoading: "import-scripts",
     chunkFormat: "array-push",
@@ -63,19 +59,13 @@ const config = {
         exclude: [/node_modules/],
         loader: "builtin:swc-loader",
         options: {
-          sourceMap: true,
           jsc: {
             parser: {
               syntax: "typescript",
-              preserveAllComments: true,
             },
-            target: "es2020",
           },
         },
         type: "javascript/auto",
-        // env: {
-        //   targets: ['chrome >= 87', 'edge >= 88', 'firefox >= 78'],
-        // },
       },
     ],
   },

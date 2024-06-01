@@ -111,7 +111,16 @@ const setTask = async (tab?: chrome.tabs.Tab) => {
     func: pageToast,
   });
   await chrome.action.setBadgeText({ text: "⏬" });
-  await ReportExport(id);
+  try {
+    await ReportExport(id);
+  } catch (e: any) {
+    console.log((e as Error).name, (e as Error).message);
+    chrome.tabs.sendMessage(tabId, {
+      type: "done",
+      title: "导出失败",
+      message: (e as Error).message,
+    });
+  }
   downloading = false;
   tabId = 0;
   await chrome.action.setBadgeText({ text: "" });
@@ -123,7 +132,17 @@ const setTask = async (tab?: chrome.tabs.Tab) => {
  * @param index 第几页
  * @returns
  */
-const fetchTask = async ([id, index]: [string, number]) => {
+const fetchTask = async ([id, index, info]: [string, number, ProjectInfo]) => {
+  console.log(
+    "ReportExport",
+    id,
+    "正在导出",
+    `${info.projectName} 第${index}页`
+  );
+  chrome.tabs.sendMessage(tabId, {
+    title: "正在导出",
+    message: `${info.projectName} 第${index}页`,
+  });
   const data = await fetch(`${host}/api/baseQuery/completeProjectReport`, {
     headers: {
       accept: "application/json, text/plain, */*",
@@ -171,7 +190,7 @@ const fetchTask = async ([id, index]: [string, number]) => {
  * @param id
  * @returns
  */
-const getProjectInfo = async (id: string) => {
+const getProjectInfo = async (id: string): Promise<ProjectInfo> => {
   console.log("getProjectInfo", id);
   const response = await fetch(
     `${host}/api/baseQuery/conclusionProjectInfo/${id}`,
@@ -213,13 +232,17 @@ const ReportExport = async (id: string) => {
   console.log("ReportExport", id);
   const startTime = Date.now();
   const info = await getProjectInfo(id);
-  const notiId = await chrome.notifications.create("ReportExportStart", {
-    type: "basic",
-    iconUrl: "images/logo.png",
-    title: "正在导出",
-    message: info.projectName,
-    silent: true,
-  });
+  let notiId = "ReportExportStart";
+  try {
+    notiId = await chrome.notifications.create(notiId, {
+      type: "basic",
+      iconUrl: "images/logo.png",
+      title: "正在导出",
+      message: info.projectName,
+      silent: true,
+    });
+  } catch {}
+
   chrome.tabs.sendMessage(tabId, {
     title: "正在导出",
     message: info.projectName,
@@ -240,28 +263,39 @@ const ReportExport = async (id: string) => {
   let imgCache: ImgResultType[] = [];
   const [pend, done, cancel] = WaitDelayPend(5000, 1000 * 60 * 60);
   // 页数递增获取图片，遇到404即为最后一页
-  const imgPool = new AsyncPool<[string, number]>({
+  const imgPool = new AsyncPool<[string, number, ProjectInfo]>({
     name: "获取图片并插入PDF",
     parallel: 4,
     maxRetryCount: 5,
     worker: fetchTask,
     rateLimiter: async (done: Resolve) => {
-      await sleep(1000);
+      await sleep(1050);
       done();
     },
     allWorkerDoneCallback: () => {
       done();
     },
-    taskErrorCallback: (args: TaskCallbackArgs<[string, number]>) => {
-      console.log(args.error);
+    taskErrorCallback: async (
+      args: TaskCallbackArgs<[string, number, ProjectInfo]>
+    ) => {
+      console.log(args.error, args.data);
       if (!args.error.message.includes("404")) {
         cancel();
+        // console.log(Date.now(), `暂停`, args.error.message, args.data);
+        // await args.pool.pause(async (resolve) => {
+        //   await sleep(2050);
+        //   console.log(Date.now(), `恢复`);
+        //   resolve();
+        // });
         args.retry();
       } else {
         imgFetchDone = true;
+        console.log(`imgFetchDone 报告图片获取完成`, index);
       }
     },
-    taskResultCallback: (args: TaskCallbackArgs<[string, number]>) => {
+    taskResultCallback: (
+      args: TaskCallbackArgs<[string, number, ProjectInfo]>
+    ) => {
       cancel();
       if (args.error != null) return;
       console.log("图片下载完成", args.data);
@@ -273,25 +307,17 @@ const ReportExport = async (id: string) => {
   while (++index) {
     if (imgFetchDone) break;
     await imgPool.waitParallelIdel();
-    console.log(
-      "ReportExport",
-      id,
-      "正在导出",
-      `${info.projectName} 第${index}页`
-    );
-    await chrome.notifications.update(notiId, {
-      type: "basic",
-      iconUrl: "images/logo.png",
-      title: "正在导出",
-      message: `${info.projectName} 第${index}页`,
-      silent: true,
-    });
-    chrome.tabs.sendMessage(tabId, {
-      title: "正在导出",
-      message: `${info.projectName} 第${index}页`,
-    });
+    try {
+      await chrome.notifications.update(notiId, {
+        type: "basic",
+        iconUrl: "images/logo.png",
+        title: "正在导出",
+        message: `${info.projectName} 第${index}页`,
+        silent: true,
+      });
+    } catch {}
     cancel();
-    imgPool.addTodo([id, index]);
+    imgPool.addTodo([id, index, info]);
     await sleep(1000);
   }
 
@@ -299,13 +325,16 @@ const ReportExport = async (id: string) => {
   await pend();
 
   console.log("生成中", imgCache.length);
-  await chrome.notifications.update(notiId, {
-    type: "basic",
-    iconUrl: "images/logo.png",
-    title: "正在导出",
-    message: `${info.projectName}.pdf 生成中`,
-    silent: true,
-  });
+  try {
+    await chrome.notifications.update(notiId, {
+      type: "basic",
+      iconUrl: "images/logo.png",
+      title: "正在导出",
+      message: `${info.projectName}.pdf 生成中`,
+      silent: true,
+    });
+  } catch {}
+
   chrome.tabs.sendMessage(tabId, {
     title: "正在导出",
     message: `${info.projectName}.pdf 生成中`,
@@ -328,7 +357,7 @@ const ReportExport = async (id: string) => {
   }
 
   const pdfUrl = doc.output("datauristring");
-  const filename = `${info.projectName}.pdf`;
+  const filename = `${info.projectName}.pdf`.replace(/[/\\?%*:|"<>]/g, "-");
   chrome.downloads.download(
     {
       url: pdfUrl,
@@ -350,13 +379,15 @@ const ReportExport = async (id: string) => {
     `耗时${costTime}分钟`,
     `共${imgCache.length}页`
   );
-  await chrome.notifications.create("ReportExportStart", {
-    type: "basic",
-    iconUrl: "images/logo.png",
-    title: "导出完成",
-    message: `${filename} 共${imgCache.length}页 用时${costTime}分钟`,
-    silent: false,
-  });
+  try {
+    await chrome.notifications.update(notiId, {
+      type: "basic",
+      iconUrl: "images/logo.png",
+      title: "导出完成",
+      message: `${filename} 共${imgCache.length}页 用时${costTime}分钟`,
+      silent: false,
+    });
+  } catch {}
   chrome.tabs.sendMessage(tabId, {
     type: "done",
     title: "导出完成",
@@ -390,4 +421,11 @@ type ToastMsg = {
   type?: "show" | "done";
   title: string;
   message: string;
+};
+
+type ProjectInfo = {
+  projectName: string;
+  projectAdmin: string;
+  conclusionAbstract: string;
+  projectKeywordC: string;
 };

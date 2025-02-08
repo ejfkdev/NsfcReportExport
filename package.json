@@ -25,20 +25,20 @@
   "dependencies": {
     "@ejfkdev/async-pool": "^1.0.0",
     "image-dimensions": "^2.3.0",
-    "jspdf": "^2.5.1",
+    "jspdf": "^2.5.2",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@rspack/cli": "0.7.0",
-    "@rspack/core": "0.7.0",
-    "@types/lodash": "^4.17.4",
-    "@types/node": "~20.13.0",
-    "chrome-types": "^0.1.286",
-    "husky": "~9.0.11",
-    "lint-staged": "~15.2.5",
-    "prettier": "~3.2.5",
-    "rimraf": "~5.0.7",
+    "@rspack/cli": "1.2.2",
+    "@rspack/core": "1.2.2",
+    "@types/lodash": "^4.17.15",
+    "@types/node": "~22.13.1",
+    "chrome-types": "^0.1.337",
+    "husky": "~9.1.7",
+    "lint-staged": "~15.4.3",
+    "prettier": "~3.4.2",
+    "rimraf": "~6.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "~5.4.5"
+    "typescript": "~5.7.3"
   }
 }

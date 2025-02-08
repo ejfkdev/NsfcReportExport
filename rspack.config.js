@@ -4,20 +4,16 @@ const mode = process.env.NODE_ENV ?? "development"; // production development
 // const isDev = process.env.NODE_ENV === "development";
 // import { Configuration } from "@rspack/cli";
 const rspack = require("@rspack/core");
+
 /** @type {import('@rspack/cli').Configuration} */
 const config = {
   optimization: {
-    splitChunks: true,
     splitChunks: {
       chunks: "all",
     },
     minimize: true,
     moduleIds: "named",
     chunkIds: "named",
-    minimizer: [
-      new rspack.SwcJsMinimizerRspackPlugin({}),
-      new rspack.SwcCssMinimizerRspackPlugin(),
-    ],
   },
   mode: mode,
   // mode: "production",
@@ -46,9 +42,8 @@ const config = {
       ],
     }),
     new rspack.ProgressPlugin({}),
-    // new NodePolyfill(),
   ].filter(Boolean),
-  watch: true,
+  watch: mode === "development",
   watchOptions: {
     ignored: /node_modules/,
   },

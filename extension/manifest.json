@@ -3,8 +3,7 @@
     "manifest_version": 3,
     "name": "国自然结题报告下载",
     "description": "国自然结题报告点击一键导出原图PDF http://t.cn/A6YcPeIM ",
-    "version": "1.3.2",
-    "default_locale": "zh_CN",
+    "version": "1.4.1",
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgQp1Z5GQxf4GJUQJLDR3wiMfbIeLHTxUWMpRFYeOhuytSZNpJax7uVUIUDuEQuVj3GDnoEdQRL8s+sMCS4YWg2s23IVQxqXhSLjwXk7vjO+dpyLA/aH2SORkJ52T7Po6BpU/dMm/q1XPruDEa2JAF88v5bY+/BCPVcvU84VV5lgAdcMYuSSO/tpzFFSEUade9+aTyVsSeZ9kBYRNhmIbMduA1+A+cuMJN4dy/y+elT1Q+bZNi9RXv012VB0OAmL0uJgKiI+wAxGERml57W3zroltNV5kYxG1mWEy/2DwTpPXHJPQMVMJ4jca5j4qhB4zYD5C6yOqjKDwS/bbwZ9WkwIDAQAB",
     "icons": {
         "512": "images/logo.png"
@@ -19,20 +18,19 @@
         "service_worker": "service_worker.js"
     },
     "externally_connectable": {
-        "matches": [
-            "https://kd.nsfc.cn/*"
-        ],
+        "matches": ["https://kd.nsfc.cn/*"],
         "accepts_tls_channel_id": true
     },
-    "host_permissions": [
-        "https://kd.nsfc.cn/*"
-    ],
+    "host_permissions": ["https://kd.nsfc.cn/*"],
     "permissions": [
         "downloads",
         "notifications",
         "contextMenus",
         "scripting",
         "activeTab",
-        "downloads.open"
+        "downloads.open",
+        "alarms",
+        "storage",
+        "unlimitedStorage"
     ]
 }

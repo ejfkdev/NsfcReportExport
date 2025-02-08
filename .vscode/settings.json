@@ -64,7 +64,8 @@
     "editor.tabSize": 2,
     "editor.formatOnType": true,
     "editor.formatOnPaste": true,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "denoland.vscode-deno"
   },
   "[jsonc]": {
     "editor.tabSize": 2,
@@ -79,8 +80,5 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[properties]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
   }
 }

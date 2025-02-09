@@ -1,11 +1,6 @@
 import { imageDimensionsFromData } from "image-dimensions";
 import { jsPDF } from "jspdf";
-import {
-  AsyncPool,
-  Resolve,
-  TaskCallbackArgs,
-  sleep,
-} from "@ejfkdev/async-pool";
+import { sleep } from "@ejfkdev/async-pool";
 import sortBy from "lodash/sortBy";
 
 const host = "https://kd.nsfc.cn";
@@ -13,6 +8,7 @@ const host = "https://kd.nsfc.cn";
 let downloading = false;
 // 标签页id，用于发送页内通知
 let tabId: number = 0;
+let fetchFromCache = false;
 
 const init = () => {
   console.log("onInstalled");
@@ -124,9 +120,9 @@ const setTask = async (tab?: chrome.tabs.Tab) => {
   downloading = false;
   tabId = 0;
   await chrome.action.setBadgeText({ text: "" });
+  checkCache();
 };
 
-let fetchFromCache = false;
 /**
  * 获取一页报告图片
  * @param id 报告id
@@ -150,6 +146,7 @@ const fetchTask = async ([id, index, info]: [
   });
   let imgURL = "";
   const cacheData = await getCachedData(`img_${id}_${index}`);
+  console.log("cacheData", cacheData);
   if (cacheData?.data) {
     imgURL = cacheData.data;
   } else {
@@ -275,74 +272,40 @@ const ReportExport = async (id: string) => {
     creator: "@ejfkdev",
   });
   doc.deletePage(1);
-  let imgFetchDone = false;
   let imgCache: ImgResultType[] = [];
   // const [pend, done, cancel] = WaitDelayPend(5000, 1000 * 60 * 60);
   // 页数递增获取图片，遇到404即为最后一页
-  const imgPool = new AsyncPool<[string, number, ProjectInfo]>({
-    name: "获取图片并插入PDF",
-    parallel: 4,
-    maxRetryCount: 100,
-    worker: fetchTask,
-    rateLimiter: async (done: Resolve) => {
-      console.log("rate", fetchFromCache);
-      if (!fetchFromCache) {
-        await sleep(1050);
-      }
-      done();
-    },
-    allWorkerDoneCallback: () => {
-      // done();
-    },
-    taskErrorCallback: async (
-      args: TaskCallbackArgs<[string, number, ProjectInfo]>
-    ) => {
-      console.log(args.error, args.data);
-      fetchFromCache = false;
-      if (!args.error.message.includes("404")) {
-        // cancel();
-        // console.log(Date.now(), `暂停`, args.error.message, args.data);
-        // await args.pool.pause(async (resolve) => {
-        //   await sleep(2050);
-        //   console.log(Date.now(), `恢复`);
-        //   resolve();
-        // });
-        args.retry();
-      } else {
-        imgFetchDone = true;
-        console.log(`imgFetchDone 报告图片获取完成`, index);
-      }
-    },
-    taskResultCallback: (
-      args: TaskCallbackArgs<[string, number, ProjectInfo]>
-    ) => {
-      // cancel();
-      if (args.error != null) return;
-      console.log("图片下载完成", args.data);
-      imgCache.push(args.result as ImgResultType);
-    },
-  });
-
   let index = 0;
+  let imgFetchDonePage = 0;
   while (++index) {
-    if (imgFetchDone) break;
-    await imgPool.waitParallelIdel();
-    try {
-      await chrome.notifications.update(notiId, {
-        type: "basic",
-        iconUrl: "images/logo.png",
-        title: "正在导出",
-        message: `${info.projectName} 第${index}页`,
-        silent: true,
-      });
-    } catch {}
-    // cancel();
-    imgPool.addTodo([id, index, info]);
-    await sleep(50);
+    if (imgFetchDonePage > 0) break;
+    let retry = false;
+    do {
+      retry = false;
+      if (!fetchFromCache) await sleep(1500);
+      try {
+        await chrome.notifications.update(notiId, {
+          type: "basic",
+          iconUrl: "images/logo.png",
+          title: "正在导出",
+          message: `${info.projectName} 第${index}页`,
+          silent: true,
+        });
+      } catch {}
+      try {
+        const result = await fetchTask([id, index, info]);
+        imgCache.push(result);
+      } catch (e: any) {
+        if ((e as Error).message.includes("404")) imgFetchDonePage = index;
+        else retry = true;
+        fetchFromCache = false;
+      }
+    } while (retry);
   }
 
-  // await sleep(5000);
-  await imgPool.waitAllWorkerDone();
+  await sleep(1000);
+  // await imgPool.events.allWorkerDone;
+  // await imgPool.events.delayAllWorkerTime;
   // await pend();
 
   console.log("生成中", imgCache.length);
@@ -405,14 +368,14 @@ const ReportExport = async (id: string) => {
       type: "basic",
       iconUrl: "images/logo.png",
       title: "导出完成",
-      message: `${filename}保存在浏览器默认下载 共${imgCache.length}页 用时${costTime}分钟`,
+      message: `${filename}保存在浏览器默认下载目录 共${imgCache.length}页 用时${costTime}分钟`,
       silent: false,
     });
   } catch {}
   chrome.tabs.sendMessage(tabId, {
     type: "done",
     title: "导出完成",
-    message: `${filename}保存在浏览器默认下载 共${imgCache.length}页 用时${costTime}分钟`,
+    message: `${filename}保存在浏览器默认下载目录 共${imgCache.length}页 用时${costTime}分钟`,
   });
   checkCache();
 };
@@ -439,18 +402,19 @@ const setCachedData = async (key: string, data: string, ttl: number) => {
 const getCachedData = async (key: string): Promise<CacheData | null> => {
   const result = await chrome.storage.local.get(key);
   const cacheData = result[key] as CacheData;
-  if (cacheData && cacheData.expire > Date.now()) {
+  if (cacheData) {
     return cacheData;
   } else {
     return null;
   }
 };
 
+// 清理过期缓存
 const checkCache = async () => {
   const keys = await chrome.storage.local.getKeys();
   for (const key of keys) {
     const cacheData = await getCachedData(key);
-    if (!cacheData || cacheData.expire > Date.now()) {
+    if (!cacheData || cacheData.expire < Date.now()) {
       await chrome.storage.local.remove(key);
     }
   }

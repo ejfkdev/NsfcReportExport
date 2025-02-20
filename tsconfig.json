@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2021",
+    "target": "ES2022",
     "declaration": false,
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -15,7 +15,10 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["chrome-types"]
+    "types": ["chrome-types"],
+    // 添加以下配置
+    "baseUrl": ".",
+    "allowJs": true
   },
   "include": ["src", "src/**/*.d.ts", "rspack.config.ts"],
   "exclude": ["**/node_modules"]

@@ -76,7 +76,7 @@
   "emmet.triggerExpansionOnTab": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "denoland.vscode-deno"
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"

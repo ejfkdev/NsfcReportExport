@@ -5,13 +5,14 @@ export default defineConfig({
     // context: __dirname,
     optimization: {
         minimizer: [],
-        splitChunks: {
-            chunks: "all",
-        },
+        // 多入口（service worker / 管理页 / 内容脚本）各自独立打包，
+        // 避免页面入口生成 importScripts 形式的共享 chunk
+        splitChunks: false,
         moduleIds: "named",
         chunkIds: "named",
     },
     output: {
+        filename: "[name].js",
         chunkFilename: "./libs/[name].bundle.js",
         chunkLoading: "import-scripts",
         chunkFormat: "array-push",
@@ -21,6 +22,8 @@ export default defineConfig({
     target: ["es2022"],
     entry: {
         service_worker: "./src/service_worker.ts",
+        dashboard: "./src/dashboard.ts",
+        content: "./src/content.ts",
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],

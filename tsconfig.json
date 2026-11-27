@@ -12,12 +12,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "skipLibCheck": true,
     "types": ["chrome-types"],
-    // 添加以下配置
-    "baseUrl": ".",
     "allowJs": true
   },
   "include": ["src", "src/**/*.d.ts", "rspack.config.ts"],

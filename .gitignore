@@ -17,6 +17,12 @@ node_modules/
 dist/
 coverage/
 release/
+
+# 打包产物（zip/crx/私钥不提交，使用 GitHub Release 附件分发）
+*.zip
+*.crx
+*.pem
+dist.crx
 output/
 output_resource/
 log/

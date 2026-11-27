@@ -2,8 +2,9 @@
     "update_url": "https://clients2.google.com/service/update2/crx",
     "manifest_version": 3,
     "name": "国自然结题报告下载",
-    "description": "国自然结题报告点击一键导出原图PDF http://t.cn/A6YcPeIM ",
-    "version": "1.5.0",
+    "description": "国自然结题报告一键导出原图 PDF，自动识别验证码，支持批量、断点续传与失败重试",
+    "version": "1.7.3",
+    "minimum_chrome_version": "116",
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgQp1Z5GQxf4GJUQJLDR3wiMfbIeLHTxUWMpRFYeOhuytSZNpJax7uVUIUDuEQuVj3GDnoEdQRL8s+sMCS4YWg2s23IVQxqXhSLjwXk7vjO+dpyLA/aH2SORkJ52T7Po6BpU/dMm/q1XPruDEa2JAF88v5bY+/BCPVcvU84VV5lgAdcMYuSSO/tpzFFSEUade9+aTyVsSeZ9kBYRNhmIbMduA1+A+cuMJN4dy/y+elT1Q+bZNi9RXv012VB0OAmL0uJgKiI+wAxGERml57W3zroltNV5kYxG1mWEy/2DwTpPXHJPQMVMJ4jca5j4qhB4zYD5C6yOqjKDwS/bbwZ9WkwIDAQAB",
     "icons": {
         "512": "images/logo.png"
@@ -12,7 +13,7 @@
         "icons": {
             "512": "images/logo.png"
         },
-        "default_title": "导出PDF"
+        "default_title": "打开报告下载管理页"
     },
     "background": {
         "service_worker": "service_worker.js"
@@ -21,6 +22,13 @@
         "matches": ["https://kd.nsfc.cn/*"],
         "accepts_tls_channel_id": true
     },
+    "content_scripts": [
+        {
+            "matches": ["https://kd.nsfc.cn/finalDetails*"],
+            "js": ["content.js"],
+            "run_at": "document_idle"
+        }
+    ],
     "host_permissions": [
         "https://kd.nsfc.cn/*",
         "https://*.sogoucdn.com/*",
@@ -39,9 +47,6 @@
         "downloads",
         "notifications",
         "contextMenus",
-        "scripting",
-        "activeTab",
-        "downloads.open",
         "alarms",
         "storage",
         "unlimitedStorage"

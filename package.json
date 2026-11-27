@@ -1,6 +1,6 @@
 {
   "name": "NsfcReportExport",
-  "version": "1.5.0",
+  "version": "1.7.3",
   "author": {
     "name": "ejfkdev"
   },
@@ -8,10 +8,11 @@
   "scripts": {
     "reset": "npx rimraf ./**/node_modules",
     "prepare": "husky install",
-    "build": "NODE_ENV=production rspack build"
+    "build": "NODE_ENV=production rspack build",
+    "package": "pnpm run build && node scripts/package.mjs"
   },
   "engines": {
-    "node": ">=16.18.1"
+    "node": ">=22.22.1"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
@@ -23,21 +24,21 @@
     "dist/"
   ],
   "dependencies": {
-    "image-dimensions": "^2.3.0",
-    "jspdf": "^3.0.0",
-    "lodash": "^4.17.21"
+    "image-dimensions": "^2.6.0",
+    "jspdf": "^4.2.1",
+    "lodash": "^4.18.1"
   },
   "devDependencies": {
-    "@rspack/cli": "1.2.3",
-    "@rspack/core": "1.2.3",
-    "@types/lodash": "^4.17.15",
-    "@types/node": "~22.13.4",
-    "chrome-types": "^0.1.342",
+    "@rspack/cli": "2.3.4",
+    "@rspack/core": "2.3.4",
+    "@types/lodash": "^4.17.27",
+    "@types/node": "~26.6.11",
+    "chrome-types": "^0.1.465",
     "husky": "~9.1.7",
-    "lint-staged": "~15.4.3",
-    "prettier": "~3.5.1",
-    "rimraf": "~6.0.1",
+    "lint-staged": "~17.6.2",
+    "prettier": "~3.10.1",
+    "rimraf": "~6.1.4",
     "ts-node": "^10.9.2",
-    "typescript": "~5.7.3"
+    "typescript": "~7.0.2"
   }
 }
